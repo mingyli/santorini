@@ -1,0 +1,4 @@
+package santorini
+
+object Board {
+}
