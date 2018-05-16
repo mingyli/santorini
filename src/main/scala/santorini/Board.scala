@@ -1,11 +1,12 @@
 package santorini
 
 object Board {
-  val BoardWidth = 5
+  val Width = 5
 
-  private val _grid = Array.ofDim[Tile](BoardWidth, BoardWidth)
-  for (i <- 0 until BoardWidth; j <- 0 until BoardWidth)
-    _grid(i)(j) = new Tile()
+  // val grid = Array.ofDim[Tile](Width, Width)
+  // for (i <- 0 until Width; j <- 0 until Width)
+  //   grid(i)(j) = new Tile()
+  val grid = Array.fill[Tile](Width, Width)(new Tile())
 
-  override def toString: String = _grid.map(_.mkString).mkString("\n")
+  override def toString: String = grid.map(_.mkString).mkString("\n")
 }
