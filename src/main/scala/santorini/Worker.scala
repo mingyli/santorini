@@ -1,9 +1,19 @@
 package santorini
 
-class Worker(position: (Int, Int) = (-1, -1), color: String = Console.GREEN) {
-  def position_= (newPosition: (Int, Int)): Unit = {
-    println(s"Setting old position ${position} to new position ${newPosition}")
+class Worker(var position: (Int, Int) = (-1, -1),
+             val color: String = Console.GREEN) {
+
+  @throws(classOf[Exception])
+  def move(direction: Direction): Unit = {
+    val (drow, dcol) = direction.d
+    var (row, col) = position
+    row += drow
+    col += dcol
+    if (Board.inBounds(row, col))
+      position = (row, col)
+    else
+      throw new Exception(s"Cannot move worker to ($row, $col)")
   }
 
-  override def toString: String = s"${color}Worker${position}${Console.RESET}" 
+  override def toString: String = s"${color}Worker${position}${Console.RESET}"
 }
