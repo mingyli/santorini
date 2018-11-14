@@ -3,11 +3,10 @@ package santorini
 import collection.mutable
 import collection.breakOut
 
-class Player(color: String) {
-  private val numWorkers = 2
-  val workers: Set[Worker] = (for (i <- 1 to numWorkers) yield new Worker(color = color))(breakOut)
+class Player(color: String = Console.BLUE) {
+  val NumWorkers = 2
 
-  def winCondition(): Boolean = {
-    true
-  }
+  val workers: Set[Worker] =
+    Iterator.fill(NumWorkers)(new Worker(color = color)).toSet
+
 }
