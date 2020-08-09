@@ -71,7 +71,7 @@ impl TryFrom<char> for Column {
             'C' => Ok(Column::C),
             'D' => Ok(Column::D),
             'E' => Ok(Column::E),
-            _ => Err(SantoriniError::InvalidArgument(String::from(value))),
+            _ => Err(SantoriniError::InvalidArgument(value.to_string())),
         }
     }
 }
@@ -111,7 +111,7 @@ impl TryFrom<char> for Row {
             '2' => Ok(Row::Two),
             '3' => Ok(Row::Three),
             '4' => Ok(Row::Four),
-            _ => Err(SantoriniError::InvalidArgument(String::from(value))),
+            _ => Err(SantoriniError::InvalidArgument(value.to_string())),
         }
     }
 }

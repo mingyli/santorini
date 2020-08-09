@@ -1,8 +1,8 @@
 pub mod command;
 pub mod error;
-pub mod position;
-pub mod phase;
 pub mod objects;
+pub mod phase;
+pub mod position;
 
 #[cfg(test)]
 mod tests {

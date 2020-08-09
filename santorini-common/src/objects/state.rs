@@ -1,11 +1,5 @@
-use crate::{
-    command::Command,
-    error::SantoriniError,
-    position::Position,
-    phase::Phase,
-};
-use super::{player::Player, space::Space};
-
+use super::{player::Player, space::Space, worker::Worker};
+use crate::{command::Command, error::SantoriniError, phase::Phase, position::Position};
 
 #[derive(Default, Debug)]
 pub struct State {
@@ -14,11 +8,6 @@ pub struct State {
 }
 
 impl State {
-    // TODO: Replace with builder API for initial workers.
-    pub fn initial() -> State {
-        State::default()
-    }
-
     pub fn board(&self) -> &[[Space; 5]; 5] {
         &self.board
     }
@@ -58,5 +47,44 @@ impl State {
     fn apply_command(&mut self, command: &dyn Command) -> Result<(), SantoriniError> {
         command.execute(self)?;
         Ok(())
+    }
+}
+
+#[derive(Default)]
+pub struct StateBuilder {
+    red_workers: Vec<Position>,
+    blue_workers: Vec<Position>,
+}
+
+impl StateBuilder {
+    pub fn new() -> StateBuilder {
+        StateBuilder::default()
+    }
+
+    pub fn add_red_worker(mut self, position: Position) -> StateBuilder {
+        self.red_workers.push(position);
+        self
+    }
+
+    pub fn add_blue_worker(mut self, position: Position) -> StateBuilder {
+        self.blue_workers.push(position);
+        self
+    }
+
+    pub fn build(self) -> State {
+        let mut state = State::default();
+        for position in self.red_workers {
+            state
+                .mut_space(&position)
+                .mut_worker()
+                .replace(Worker::new(Player::Red));
+        }
+        for position in self.blue_workers {
+            state
+                .mut_space(&position)
+                .mut_worker()
+                .replace(Worker::new(Player::Blue));
+        }
+        state
     }
 }

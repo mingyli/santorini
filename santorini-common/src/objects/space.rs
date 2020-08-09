@@ -1,4 +1,4 @@
-use super::{worker::Worker, tower::Tower};
+use super::{tower::Tower, worker::Worker};
 
 #[derive(Default, Debug)]
 pub struct Space {

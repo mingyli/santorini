@@ -1,8 +1,13 @@
 use santorini_common::{
     command::{BuildCommand, Command, MovementCommand},
     error::SantoriniError,
+    objects::{
+        player::Player,
+        state::{State, StateBuilder},
+        worker::Worker,
+    },
+    phase::Phase,
     position::{Column, Position, Row},
-    phase::Phase, objects::{worker::Worker, state::State, player::Player},
 };
 
 fn read_position(message: &str) -> Position {
@@ -32,20 +37,19 @@ fn read_position(message: &str) -> Position {
 
 fn get_move() -> Box<dyn Command> {
     Box::new(MovementCommand {
-        from: read_position("worker from"),
-        to: read_position("worker to"),
+        from: read_position("Worker from"),
+        to: read_position("Worker to"),
     })
 }
 
 fn get_build() -> Box<dyn Command> {
     Box::new(BuildCommand {
-        position: read_position("build"),
+        position: read_position("Build"),
     })
 }
 
 fn display(state: &State) {
     use colored::Colorize;
-    println!("Current player {}", state.current_player());
     println!("  a b c d e");
     for (row_number, row) in state.board().iter().enumerate() {
         print!("{} ", row_number);
@@ -63,22 +67,22 @@ fn display(state: &State) {
         }
         println!();
     }
+    println!(
+        "Current player {}",
+        match state.current_player() {
+            Player::Red => "Red".red(),
+            Player::Blue => "Blue".blue(),
+        }
+    );
 }
 
 fn main() {
-    let mut state = State::initial();
-    *state
-        .mut_space(&Position::new(Row::Zero, Column::A))
-        .mut_worker() = Some(Worker::new(Player::Blue));
-    *state
-        .mut_space(&Position::new(Row::One, Column::A))
-        .mut_worker() = Some(Worker::new(Player::Blue));
-    *state
-        .mut_space(&Position::new(Row::One, Column::B))
-        .mut_worker() = Some(Worker::new(Player::Red));
-    *state
-        .mut_space(&Position::new(Row::Two, Column::B))
-        .mut_worker() = Some(Worker::new(Player::Red));
+    let state = StateBuilder::new()
+        .add_blue_worker(Position::new(Row::One, Column::B))
+        .add_blue_worker(Position::new(Row::Two, Column::B))
+        .add_red_worker(Position::new(Row::One, Column::C))
+        .add_red_worker(Position::new(Row::Two, Column::C))
+        .build();
     let mut factories = [get_move, get_build].iter().cycle();
     let mut phase = Phase::InProgress(state);
     while let Phase::InProgress(state) = phase {
