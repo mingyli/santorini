@@ -2,14 +2,7 @@ use std::{convert::TryFrom, fmt};
 
 use crate::error::SantoriniError;
 
-#[derive(Debug)]
-pub struct Input {
-    pub worker_location: Position,
-    pub worker_destination: Position,
-    pub build_destination: Position,
-}
-
-#[derive(Clone, Debug)]
+#[derive(Copy, Clone, Debug)]
 pub struct Position {
     pub column: Column,
     pub row: Row,

@@ -1,11 +1,8 @@
-#![feature(option_unwrap_none)]
-
+pub mod command;
 pub mod error;
-pub mod input;
+pub mod position;
 pub mod phase;
-pub mod player;
-pub mod state;
-pub mod tower;
+pub mod objects;
 
 #[cfg(test)]
 mod tests {

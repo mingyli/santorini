@@ -1,9 +1,8 @@
 use santorini_common::{
+    command::{BuildCommand, Command, MovementCommand},
     error::SantoriniError,
-    input::{Column, Input, Position, Row},
-    phase::Phase,
-    player::{Player, Worker},
-    state::State,
+    position::{Column, Position, Row},
+    phase::Phase, objects::{worker::Worker, state::State, player::Player},
 };
 
 fn read_position(message: &str) -> Position {
@@ -31,16 +30,22 @@ fn read_position(message: &str) -> Position {
     result.unwrap()
 }
 
-fn read_input() -> Input {
-    Input {
-        worker_location: read_position("Enter worker's current location"),
-        worker_destination: read_position("Enter worker's destination location"),
-        build_destination: read_position("Enter build location"),
-    }
+fn get_move() -> Box<dyn Command> {
+    Box::new(MovementCommand {
+        from: read_position("worker from"),
+        to: read_position("worker to"),
+    })
+}
+
+fn get_build() -> Box<dyn Command> {
+    Box::new(BuildCommand {
+        position: read_position("build"),
+    })
 }
 
 fn display(state: &State) {
     use colored::Colorize;
+    println!("Current player {}", state.current_player());
     println!("  a b c d e");
     for (row_number, row) in state.board().iter().enumerate() {
         print!("{} ", row_number);
@@ -74,12 +79,12 @@ fn main() {
     *state
         .mut_space(&Position::new(Row::Two, Column::B))
         .mut_worker() = Some(Worker::new(Player::Red));
+    let mut factories = [get_move, get_build].iter().cycle();
     let mut phase = Phase::InProgress(state);
     while let Phase::InProgress(state) = phase {
         display(&state);
-        let input = read_input();
-        println!("Applying input {:?}", input);
-        phase = State::transition(state, &input);
+        let f = factories.next().unwrap();
+        phase = State::transition(state, f().as_ref());
     }
     println!("Game over!");
     println!("{:?}", phase);

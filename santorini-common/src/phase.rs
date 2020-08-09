@@ -1,4 +1,4 @@
-use crate::{player::Player, state::State};
+use crate::objects::{player::Player, state::State};
 
 #[derive(Debug)]
 pub enum Phase {
