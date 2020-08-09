@@ -15,6 +15,12 @@ impl Player {
     }
 }
 
+impl Default for Player {
+    fn default() -> Player {
+        Player::Red
+    }
+}
+
 impl fmt::Display for Player {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {

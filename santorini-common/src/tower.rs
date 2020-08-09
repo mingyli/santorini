@@ -1,5 +1,7 @@
 use std::fmt;
 
+use crate::error::SantoriniError;
+
 #[derive(Default, Debug)]
 pub struct Tower {
     dome: Option<()>,
@@ -17,9 +19,9 @@ impl fmt::Display for Tower {
 }
 
 impl Tower {
-    pub fn build(&mut self) {
+    pub fn build(&mut self) -> Result<(), SantoriniError> {
         if self.dome.is_some() {
-            panic!("TODO: handle dome")
+            Err(SantoriniError::InvalidBuild)
         } else {
             match self.level {
                 Level::Three => self.build_dome(),
@@ -28,11 +30,17 @@ impl Tower {
         }
     }
 
-    pub fn build_dome(&mut self) {
-        self.dome = Some(())
+    pub fn build_dome(&mut self) -> Result<(), SantoriniError> {
+        match self.dome {
+            Some(_) => Err(SantoriniError::InvalidBuild),
+            None => {
+                self.dome = Some(());
+                Ok(())
+            }
+        }
     }
 
-    pub fn build_block(&mut self) {
+    pub fn build_block(&mut self) -> Result<(), SantoriniError> {
         self.level.up()
     }
 }
@@ -52,12 +60,21 @@ impl Default for Level {
 }
 
 impl Level {
-    fn up(&mut self) {
+    fn up(&mut self) -> Result<(), SantoriniError> {
         match self {
-            Level::Ground => *self = Level::One,
-            Level::One => *self = Level::Two,
-            Level::Two => *self = Level::Three,
-            Level::Three => panic!("TODO: handle level three"),
+            Level::Ground => {
+                *self = Level::One;
+                Ok(())
+            }
+            Level::One => {
+                *self = Level::Two;
+                Ok(())
+            }
+            Level::Two => {
+                *self = Level::Three;
+                Ok(())
+            }
+            Level::Three => Err(SantoriniError::InvalidBuild),
         }
     }
 }

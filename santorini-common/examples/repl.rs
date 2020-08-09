@@ -1,4 +1,5 @@
 use santorini_common::{
+    error::SantoriniError,
     input::{Column, Input, Position, Row},
     phase::Phase,
     player::{Player, Worker},
@@ -9,21 +10,25 @@ fn read_position(message: &str) -> Position {
     use std::convert::TryFrom;
     use std::io;
 
-    println!("{}: ", message);
-    let mut entry = String::new();
-    io::stdin().read_line(&mut entry).unwrap();
-    match *entry
-        .to_uppercase()
-        .chars()
-        .collect::<Vec<char>>()
-        .as_slice()
-    {
-        [column, row, ..] => Position {
-            column: Column::try_from(column).unwrap(),
-            row: Row::try_from(row).unwrap(),
-        },
-        _ => panic!("TODO: handle retry"),
+    let foo = || -> Result<Position, SantoriniError> {
+        println!("{}: ", message);
+        let mut entry = String::new();
+        io::stdin().read_line(&mut entry)?;
+        match *entry.chars().collect::<Vec<char>>().as_slice() {
+            [column, row, ..] => Ok(Position {
+                column: Column::try_from(column)?,
+                row: Row::try_from(row)?,
+            }),
+            _ => Err(SantoriniError::InvalidArgument(entry)),
+        }
+    };
+
+    let mut result = foo();
+    while let Err(err) = result {
+        println!("{}. Let's try that again", err);
+        result = foo();
     }
+    result.unwrap()
 }
 
 fn read_input() -> Input {

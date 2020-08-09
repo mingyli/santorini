@@ -1,5 +1,6 @@
 #![feature(option_unwrap_none)]
 
+pub mod error;
 pub mod input;
 pub mod phase;
 pub mod player;
