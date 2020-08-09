@@ -14,6 +14,10 @@ pub struct Space {
 }
 
 impl Space {
+    pub fn tower(&self) -> &Tower {
+        &self.tower
+    }
+
     pub fn worker(&self) -> &Option<Worker> {
         &self.worker
     }
@@ -32,6 +36,10 @@ impl State {
     // TODO: Replace with builder API for initial workers.
     pub fn initial() -> State {
         State::default()
+    }
+
+    pub fn board(&self) -> &[[Space; 5]; 5] {
+        &self.board
     }
 
     pub fn mut_space(&mut self, position: &Position) -> &mut Space {
@@ -59,20 +67,20 @@ impl State {
 
 impl fmt::Display for State {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        use colored::Colorize;
         writeln!(f, "  a b c d e")?;
         for (row_number, row) in self.board.iter().enumerate() {
             write!(f, "{} ", row_number)?;
             for space in row {
+                write!(f, "{}", space.tower)?;
                 write!(
                     f,
                     "{} ",
                     match space.worker() {
                         Some(worker) => match worker.player() {
-                            Player::Red => format!("{}", space.tower).red(),
-                            Player::Blue => format!("{}", space.tower).blue(),
+                            Player::Red => 'R',
+                            Player::Blue => 'B',
                         },
-                        None => format!("{}", space.tower).as_str().into(),
+                        None => ' ',
                     }
                 )?;
             }

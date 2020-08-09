@@ -34,6 +34,27 @@ fn read_input() -> Input {
     }
 }
 
+fn display(state: &State) {
+    use colored::Colorize;
+    println!("  a b c d e");
+    for (row_number, row) in state.board().iter().enumerate() {
+        print!("{} ", row_number);
+        for space in row {
+            print!(
+                "{} ",
+                match space.worker() {
+                    Some(worker) => match worker.player() {
+                        Player::Red => format!("{}", space.tower()).red(),
+                        Player::Blue => format!("{}", space.tower()).blue(),
+                    },
+                    None => format!("{}", space.tower()).as_str().into(),
+                }
+            );
+        }
+        println!();
+    }
+}
+
 fn main() {
     let mut state = State::initial();
     *state
@@ -50,7 +71,7 @@ fn main() {
         .mut_worker() = Some(Worker::new(Player::Red));
     let mut phase = Phase::InProgress(state);
     while let Phase::InProgress(state) = phase {
-        println!("{}", state);
+        display(&state);
         let input = read_input();
         println!("Applying input {:?}", input);
         phase = State::transition(state, &input);
