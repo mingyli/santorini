@@ -8,6 +8,10 @@ pub struct State {
 }
 
 impl State {
+    pub fn builder() -> StateBuilder {
+        StateBuilder::new()
+    }
+
     pub fn board(&self) -> &[[Space; 5]; 5] {
         &self.board
     }

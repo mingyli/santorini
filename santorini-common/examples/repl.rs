@@ -1,11 +1,7 @@
 use santorini_common::{
     command::{BuildCommand, Command, MovementCommand},
     error::SantoriniError,
-    objects::{
-        player::Player,
-        state::{State, StateBuilder},
-        worker::Worker,
-    },
+    objects::{player::Player, state::State},
     phase::Phase,
     position::{Column, Position, Row},
 };
@@ -77,7 +73,7 @@ fn display(state: &State) {
 }
 
 fn main() {
-    let state = StateBuilder::new()
+    let state = State::builder()
         .add_blue_worker(Position::new(Row::One, Column::B))
         .add_blue_worker(Position::new(Row::Two, Column::B))
         .add_red_worker(Position::new(Row::One, Column::C))
