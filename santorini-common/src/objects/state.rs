@@ -1,7 +1,9 @@
+use serde::{Deserialize, Serialize};
+
 use super::{player::Player, space::Space, worker::Worker};
 use crate::{command::Command, error::SantoriniError, phase::Phase, position::Position};
 
-#[derive(Default, Debug)]
+#[derive(Serialize, Deserialize, Default, Debug)]
 pub struct State {
     board: [[Space; 5]; 5],
     current_player: Player,

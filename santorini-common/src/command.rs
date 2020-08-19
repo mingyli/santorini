@@ -40,7 +40,7 @@ impl Command for MovementCommand {
         Ok(())
     }
 
-    fn undo(&self, state: &mut State) -> Result<(), SantoriniError> {
+    fn undo(&self, _state: &mut State) -> Result<(), SantoriniError> {
         todo!()
     }
 }
@@ -72,7 +72,7 @@ impl Command for BuildCommand {
         }
     }
 
-    fn undo(&self, state: &mut State) -> Result<(), SantoriniError> {
+    fn undo(&self, _state: &mut State) -> Result<(), SantoriniError> {
         todo!()
     }
 }
