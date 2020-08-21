@@ -1,0 +1,17 @@
+[package]
+name = "santorini-server"
+version = "0.1.0"
+authors = ["mingyli <mingyli34@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+async-std = "1.6.3"
+async-tungstenite = "0.8"
+bincode = "1.3.1"
+futures = "0.3.5"
+serde = "1.0"
+smol = "0.3.3"
+
+santorini-common = { path = "../santorini-common" }

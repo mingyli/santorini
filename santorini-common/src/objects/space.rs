@@ -1,6 +1,8 @@
+use serde::{Deserialize, Serialize};
+
 use super::{tower::Tower, worker::Worker};
 
-#[derive(Default, Debug)]
+#[derive(Serialize, Deserialize, Default, Debug)]
 pub struct Space {
     tower: Tower,
     worker: Option<Worker>,

@@ -1,6 +1,6 @@
 [workspace]
 members = [
   "santorini-common",
-  # "santorini-web",
-  # "santorini-server",
+  "santorini-web",
+  "santorini-server",
 ]

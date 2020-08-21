@@ -1,6 +1,8 @@
 use super::player::Player;
 
-#[derive(Debug)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Worker {
     player: Player,
 }

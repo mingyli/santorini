@@ -1,6 +1,8 @@
 use std::fmt;
 
-#[derive(Default, Debug)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize, Default, Debug)]
 pub struct Tower {
     dome: Option<()>,
     level: Level,
@@ -34,7 +36,7 @@ impl Tower {
     }
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Serialize, Deserialize, Clone, Copy, Debug)]
 pub enum Level {
     Ground = 0,
     One = 1,
