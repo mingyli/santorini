@@ -1,6 +1,9 @@
 use crate::{
     error::SantoriniError,
-    objects::{state::State, tower::Level},
+    objects::{
+        state::State,
+        tower::{Dome, Level},
+    },
     position::Position,
 };
 
@@ -58,7 +61,7 @@ impl Command for BuildCommand {
         } else {
             match tower.level() {
                 Level::Three => {
-                    tower.mut_dome().replace(());
+                    tower.mut_dome().replace(Dome);
                 }
                 Level::Two => {
                     *tower.mut_level() = Level::Three;
