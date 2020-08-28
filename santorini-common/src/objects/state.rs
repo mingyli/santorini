@@ -30,6 +30,7 @@ impl State {
         &mut self.current_player
     }
 
+    // I don't think this method should exist?
     pub fn transition(mut self, command: &dyn Command) -> Phase {
         if let Err(err) = self.apply_command(command) {
             eprintln!("{}", err);
@@ -50,9 +51,13 @@ impl State {
     // }
 
     /// Mutates the game state. Any errors surfaced here are not irrecoverable.
-    fn apply_command(&mut self, command: &dyn Command) -> Result<(), SantoriniError> {
+    pub fn apply_command(&mut self, command: &dyn Command) -> Result<(), SantoriniError> {
         command.execute(self)?;
         Ok(())
+    }
+
+    pub fn winner(&self) -> Option<Player> {
+        return None;
     }
 }
 
