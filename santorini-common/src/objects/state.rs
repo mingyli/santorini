@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{player::Player, space::Space, worker::Worker};
+use super::{player::Player, space::Space, tower::Level, worker::Worker};
 use crate::{command::Command, error::SantoriniError, phase::Phase, position::Position};
 
 #[derive(Serialize, Deserialize, Default, Debug)]
@@ -56,7 +56,16 @@ impl State {
         Ok(())
     }
 
+    // Returns a winner, assuming that a legal state has exactly one winner
     pub fn winner(&self) -> Option<Player> {
+        for space in self.board.iter().flatten() {
+            if let Some(worker) = space.worker() {
+                if space.tower().level() == Level::Three {
+                    return Some(worker.player());
+                }
+            }
+        }
+
         return None;
     }
 }
