@@ -1,7 +1,10 @@
 use serde::{Deserialize, Serialize};
 
 use super::{player::Player, space::Space, tower::Level, worker::Worker};
-use crate::{command::Command, error::SantoriniError, phase::Phase, position::Position};
+use crate::{
+    command::Command, error::SantoriniError, phase::Phase, position::Column, position::Position,
+    position::Row,
+};
 
 #[derive(Serialize, Deserialize, Default, Debug)]
 pub struct State {
@@ -106,5 +109,27 @@ impl StateBuilder {
                 .replace(Worker::new(Player::Blue));
         }
         state
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn it_finds_winner_when_won() {
+        let pos = Position::new(Row::One, Column::A);
+        let mut state = StateBuilder::new().add_red_worker(pos).build();
+        *(state.mut_space(&pos).mut_tower().mut_level()) = Level::Three;
+
+        assert_eq!(state.winner(), Some(Player::Red));
+    }
+
+    #[test]
+    fn it_finds_no_winner_when_not_won() {
+        let pos = Position::new(Row::One, Column::A);
+        let state = StateBuilder::new().add_red_worker(pos).build();
+
+        assert_eq!(state.winner(), None);
     }
 }
