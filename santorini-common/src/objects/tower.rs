@@ -3,8 +3,11 @@ use std::fmt;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Default, Debug)]
+pub struct Dome;
+
+#[derive(Serialize, Deserialize, Default, Debug)]
 pub struct Tower {
-    dome: Option<()>,
+    dome: Option<Dome>,
     level: Level,
 }
 
@@ -19,11 +22,11 @@ impl fmt::Display for Tower {
 }
 
 impl Tower {
-    pub fn dome(&self) -> &Option<()> {
+    pub fn dome(&self) -> &Option<Dome> {
         &self.dome
     }
 
-    pub fn mut_dome(&mut self) -> &mut Option<()> {
+    pub fn mut_dome(&mut self) -> &mut Option<Dome> {
         &mut self.dome
     }
 
