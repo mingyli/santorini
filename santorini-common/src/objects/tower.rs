@@ -36,7 +36,7 @@ impl Tower {
     }
 }
 
-#[derive(Serialize, Deserialize, Clone, Copy, Debug)]
+#[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
 pub enum Level {
     Ground = 0,
     One = 1,

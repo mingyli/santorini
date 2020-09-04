@@ -3,36 +3,33 @@ use std::{convert::TryFrom, fmt};
 use crate::error::SantoriniError;
 
 #[derive(Copy, Clone, Debug)]
-pub struct Position {
-    pub column: Column,
-    pub row: Row,
-}
+pub struct Position(pub Column, pub Row);
 
 impl Position {
     pub fn new(row: Row, column: Column) -> Position {
-        Position { row, column }
+        Position(column, row)
     }
 
     pub fn row(&self) -> Row {
-        self.row
+        self.1
     }
 
     pub fn row_index(&self) -> usize {
-        self.row as usize
+        self.row() as usize
     }
 
     pub fn column(&self) -> Column {
-        self.column
+        self.0
     }
 
     pub fn column_index(&self) -> usize {
-        self.column as usize
+        self.column() as usize
     }
 }
 
 impl fmt::Display for Position {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}{}", self.column, self.row)
+        write!(f, "{}{}", self.column(), self.row())
     }
 }
 

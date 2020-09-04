@@ -18,6 +18,10 @@ impl State {
         &self.board
     }
 
+    pub fn space(&self, position: &Position) -> &Space {
+        &self.board[position.row_index()][position.column_index()]
+    }
+
     pub fn mut_space(&mut self, position: &Position) -> &mut Space {
         &mut self.board[position.row_index()][position.column_index()]
     }

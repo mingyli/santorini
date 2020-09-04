@@ -15,10 +15,7 @@ fn read_position(message: &str) -> Position {
         let mut entry = String::new();
         io::stdin().read_line(&mut entry)?;
         match *entry.chars().collect::<Vec<char>>().as_slice() {
-            [column, row, ..] => Ok(Position {
-                column: Column::try_from(column)?,
-                row: Row::try_from(row)?,
-            }),
+            [column, row, ..] => Ok(Position(Column::try_from(column)?, Row::try_from(row)?)),
             _ => Err(SantoriniError::InvalidArgument(entry)),
         }
     };
