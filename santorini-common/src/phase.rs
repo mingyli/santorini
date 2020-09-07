@@ -8,7 +8,7 @@ pub enum Phase {
 }
 
 impl Phase {
-    fn apply(self, command: &dyn Command) -> Result<Phase, SantoriniError> {
+    pub fn apply(self, command: &dyn Command) -> Result<Phase, SantoriniError> {
         match self {
             Phase::InProgress(mut state) => {
                 &state.apply_command(command)?;

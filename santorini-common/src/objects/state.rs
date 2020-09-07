@@ -2,8 +2,10 @@ use serde::{Deserialize, Serialize};
 
 use super::{player::Player, space::Space, tower::Level, worker::Worker};
 use crate::{
-    command::Command, error::SantoriniError, phase::Phase, position::Column, position::Position,
-    position::Row,
+    command::Command,
+    error::SantoriniError,
+    phase::Phase,
+    position::{Column, Position, Row},
 };
 
 #[derive(Serialize, Deserialize, Default, Debug)]
@@ -19,6 +21,10 @@ impl State {
 
     pub fn board(&self) -> &[[Space; 5]; 5] {
         &self.board
+    }
+
+    pub fn space(&self, position: &Position) -> &Space {
+        &self.board[position.row_index()][position.column_index()]
     }
 
     pub fn mut_space(&mut self, position: &Position) -> &mut Space {
