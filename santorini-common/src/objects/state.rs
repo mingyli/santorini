@@ -69,11 +69,10 @@ impl State {
     pub fn winner(&self) -> Option<Player> {
         self.board.iter().flatten().find_map(|space| {
             if space.tower().level() == Level::Three {
-                if let Some(worker) = space.worker() {
-                    return Some(worker.player());
-                }
+                space.worker().as_ref().and_then(|w| Some(w.player()))
+            } else {
+                None
             }
-            None
         })
     }
 }
