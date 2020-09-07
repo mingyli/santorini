@@ -1,7 +1,12 @@
 use serde::{Deserialize, Serialize};
 
-use super::{player::Player, space::Space, worker::Worker};
-use crate::{command::Command, error::SantoriniError, phase::Phase, position::Position};
+use super::{player::Player, space::Space, tower::Level, worker::Worker};
+use crate::{
+    command::Command,
+    error::SantoriniError,
+    phase::Phase,
+    position::{Column, Position, Row},
+};
 
 #[derive(Serialize, Deserialize, Default, Debug)]
 pub struct State {
@@ -18,6 +23,10 @@ impl State {
         &self.board
     }
 
+    pub fn space(&self, position: &Position) -> &Space {
+        &self.board[position.row_index()][position.column_index()]
+    }
+
     pub fn mut_space(&mut self, position: &Position) -> &mut Space {
         &mut self.board[position.row_index()][position.column_index()]
     }
@@ -30,6 +39,7 @@ impl State {
         &mut self.current_player
     }
 
+    // I don't think this method should exist?
     pub fn transition(mut self, command: &dyn Command) -> Phase {
         if let Err(err) = self.apply_command(command) {
             eprintln!("{}", err);
@@ -50,9 +60,20 @@ impl State {
     // }
 
     /// Mutates the game state. Any errors surfaced here are not irrecoverable.
-    fn apply_command(&mut self, command: &dyn Command) -> Result<(), SantoriniError> {
+    pub fn apply_command(&mut self, command: &dyn Command) -> Result<(), SantoriniError> {
         command.execute(self)?;
         Ok(())
+    }
+
+    // Returns a winner, assuming that a legal state has exactly one winner
+    pub fn winner(&self) -> Option<Player> {
+        self.board.iter().flatten().find_map(|space| {
+            if space.tower().level() == Level::Three {
+                space.worker().as_ref().and_then(|w| Some(w.player()))
+            } else {
+                None
+            }
+        })
     }
 }
 
@@ -92,5 +113,27 @@ impl StateBuilder {
                 .replace(Worker::new(Player::Blue));
         }
         state
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn it_finds_winner_when_won() {
+        let pos = Position::new(Row::One, Column::A);
+        let mut state = StateBuilder::new().add_red_worker(pos).build();
+        *(state.mut_space(&pos).mut_tower().mut_level()) = Level::Three;
+
+        assert_eq!(state.winner(), Some(Player::Red));
+    }
+
+    #[test]
+    fn it_finds_no_winner_when_not_won() {
+        let pos = Position::new(Row::One, Column::A);
+        let state = StateBuilder::new().add_red_worker(pos).build();
+
+        assert_eq!(state.winner(), None);
     }
 }
