@@ -73,7 +73,7 @@ impl State {
                     return Some(worker.player());
                 }
             }
-            return None;
+            None
         })
     }
 }

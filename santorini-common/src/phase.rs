@@ -11,7 +11,7 @@ impl Phase {
     pub fn apply(self, command: &dyn Command) -> Result<Phase, SantoriniError> {
         match self {
             Phase::InProgress(mut state) => {
-                &state.apply_command(command)?;
+                state.apply_command(command)?;
                 Ok(match state.winner() {
                     Some(player) => Phase::Win(state, player),
                     None => Phase::InProgress(state),
