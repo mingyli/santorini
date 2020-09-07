@@ -67,15 +67,14 @@ impl State {
 
     // Returns a winner, assuming that a legal state has exactly one winner
     pub fn winner(&self) -> Option<Player> {
-        for space in self.board.iter().flatten() {
-            if let Some(worker) = space.worker() {
-                if space.tower().level() == Level::Three {
+        self.board.iter().flatten().find_map(|space| {
+            if space.tower().level() == Level::Three {
+                if let Some(worker) = space.worker() {
                     return Some(worker.player());
                 }
             }
-        }
-
-        return None;
+            return None;
+        })
     }
 }
 
