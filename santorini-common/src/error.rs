@@ -10,8 +10,12 @@ pub enum SantoriniError {
     #[error("Invalid build on position: {0}")]
     InvalidBuild(Position),
 
-    #[error("Invalid movement from {from} to {to}")]
-    InvalidMovement { from: Position, to: Position },
+    #[error("Invalid movement from {from} to {to}: {details}")]
+    InvalidMovement {
+        from: Position,
+        to: Position,
+        details: String,
+    },
 
     #[error(transparent)]
     Other(#[from] std::io::Error),

@@ -16,7 +16,7 @@ impl fmt::Display for Tower {
         if self.dome.is_some() {
             write!(f, "D")
         } else {
-            write!(f, "{}", self.level as usize)
+            self.level.fmt(f)
         }
     }
 }
@@ -39,7 +39,7 @@ impl Tower {
     }
 }
 
-#[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
+#[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Level {
     Ground = 0,
     One = 1,
@@ -50,5 +50,21 @@ pub enum Level {
 impl Default for Level {
     fn default() -> Level {
         Level::Ground
+    }
+}
+
+impl fmt::Display for Level {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", *self as usize)
+    }
+}
+
+impl Level {
+    pub fn up(self) -> Level {
+        match self {
+            Level::Ground => Level::One,
+            Level::One => Level::Two,
+            Level::Two | Level::Three => Level::Three,
+        }
     }
 }
