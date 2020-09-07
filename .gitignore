@@ -1,1 +1,7 @@
 /target
+
+# Cargo
+Cargo.lock
+
+# Editor files
+*.sw?
