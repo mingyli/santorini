@@ -1,12 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::{player::Player, space::Space, tower::Level, worker::Worker};
-use crate::{
-    command::Command,
-    error::SantoriniError,
-    phase::Phase,
-    position::{Column, Position, Row},
-};
+use crate::{command::Command, error::SantoriniError, phase::Phase, position::Position};
 
 #[derive(Serialize, Deserialize, Default, Debug)]
 pub struct State {
@@ -119,6 +114,7 @@ impl StateBuilder {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::position::{Column, Row};
 
     #[test]
     fn it_finds_winner_when_won() {
