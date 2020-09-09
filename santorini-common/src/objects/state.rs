@@ -1,6 +1,11 @@
 use serde::{Deserialize, Serialize};
 
-use super::{player::Player, space::Space, tower::Level, worker::Worker};
+use super::{
+    player::Player,
+    space::Space,
+    tower::{Level, Tower},
+    worker::Worker,
+};
 use crate::{
     command::Command,
     error::SantoriniError,
@@ -81,6 +86,7 @@ impl State {
 pub struct StateBuilder {
     red_workers: Vec<Position>,
     blue_workers: Vec<Position>,
+    towers: Vec<(Position, Tower)>,
 }
 
 impl StateBuilder {
@@ -98,6 +104,11 @@ impl StateBuilder {
         self
     }
 
+    pub fn add_tower(mut self, position: Position, tower: Tower) -> StateBuilder {
+        self.towers.push((position, tower));
+        self
+    }
+
     pub fn build(self) -> State {
         let mut state = State::default();
         for position in self.red_workers {
@@ -111,6 +122,10 @@ impl StateBuilder {
                 .mut_space(&position)
                 .mut_worker()
                 .replace(Worker::new(Player::Blue));
+        }
+
+        for (position, tower) in self.towers {
+            *(state.mut_space(&position).mut_tower()) = tower;
         }
         state
     }
