@@ -87,11 +87,17 @@ pub struct StateBuilder {
     red_workers: Vec<Position>,
     blue_workers: Vec<Position>,
     towers: Vec<(Position, Tower)>,
+    current_player: Player,
 }
 
 impl StateBuilder {
     pub fn new() -> StateBuilder {
         StateBuilder::default()
+    }
+
+    pub fn with_current_player(mut self, player: Player) -> StateBuilder {
+        self.current_player = player;
+        self
     }
 
     pub fn add_red_worker(mut self, position: Position) -> StateBuilder {
@@ -111,6 +117,9 @@ impl StateBuilder {
 
     pub fn build(self) -> State {
         let mut state = State::default();
+
+        state.current_player = self.current_player;
+
         for position in self.red_workers {
             state
                 .mut_space(&position)
