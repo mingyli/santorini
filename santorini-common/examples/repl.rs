@@ -2,7 +2,6 @@ use santorini_common::{
     command::{BuildCommand, Command, MovementCommand},
     error::SantoriniError,
     objects::{player::Player, state::State},
-    phase::Phase,
     position::{Column, Position, Row},
 };
 
@@ -70,19 +69,24 @@ fn display(state: &State) {
 }
 
 fn main() {
-    let state = State::builder()
+    let mut state = State::builder()
         .add_blue_worker(Position::new(Row::One, Column::B))
         .add_blue_worker(Position::new(Row::Two, Column::B))
         .add_red_worker(Position::new(Row::One, Column::C))
         .add_red_worker(Position::new(Row::Two, Column::C))
         .build();
     let mut factories = [get_move, get_build].iter().cycle();
-    let mut phase = Phase::InProgress(state);
-    while let Phase::InProgress(state) = phase {
+
+    while let None = state.winner() {
         display(&state);
         let f = factories.next().unwrap();
-        phase = State::transition(state, f().as_ref());
+        state = match State::transition(state, f().as_ref()) {
+            Ok(state) => state,
+            Err(err) => {
+                eprintln!("Error: {}", err);
+                break;
+            }
+        }
     }
     println!("Game over!");
-    println!("{:?}", phase);
 }

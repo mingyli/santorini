@@ -2,8 +2,7 @@ use itertools::Itertools;
 
 use santorini_common::{
     command::{Command, MovementCommand},
-    objects::state::StateBuilder,
-    phase::*,
+    objects::state::{State, StateBuilder},
     position::{Column, Position, Row},
 };
 
@@ -30,18 +29,13 @@ fn it_applies_move_commands() {
     let mut move_commands = move_commands.iter().map(|cmd| cmd as &dyn Command);
 
     let state = StateBuilder::new().add_red_worker(positions[0]).build();
-    let phase = Phase::InProgress(state);
-    let result = move_commands.try_fold(phase, Phase::apply);
-
-    assert!(matches!(result, Ok(_)));
-
-    if let Ok(Phase::InProgress(final_state)) = result {
-        let final_position = positions[positions.len() - 1];
-        assert!(matches!(
-            final_state.space(&final_position).worker(),
-            Some(_)
-        ));
-    } else {
-        assert!(false);
-    }
+    match move_commands.try_fold(state, State::apply_command) {
+        Ok(state) => {
+            let final_position = positions[positions.len() - 1];
+            assert!(matches!(state.space(&final_position).worker(), Some(_)));
+        }
+        Err(e) => {
+            assert!(false, "Unexpected error: {}", e);
+        }
+    };
 }
