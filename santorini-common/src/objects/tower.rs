@@ -7,8 +7,8 @@ pub struct Dome;
 
 #[derive(Serialize, Deserialize, Default, Debug)]
 pub struct Tower {
-    dome: Option<Dome>,
-    level: Level,
+    pub dome: Option<Dome>,
+    pub level: Level,
 }
 
 impl fmt::Display for Tower {
