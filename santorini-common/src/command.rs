@@ -130,3 +130,189 @@ impl Command for BuildCommand {
         todo!()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::objects::{player::Player, state::StateBuilder};
+
+    #[test]
+    fn it_errors_if_no_worker_at_from() {
+        let from = Position::new(Row::One, Column::A);
+        let to = Position::new(Row::One, Column::B);
+        let cmd = MovementCommand { from, to };
+
+        let state = StateBuilder::new().build();
+
+        assert!(cmd.can_execute(&state).is_err())
+    }
+
+    #[test]
+    fn it_errors_if_not_current_player_worker() {
+        let from = Position::new(Row::One, Column::A);
+        let to = Position::new(Row::One, Column::B);
+        let cmd = MovementCommand { from, to };
+
+        let state = StateBuilder::new()
+            .with_current_player(Player::Blue)
+            .add_red_worker(from)
+            .build();
+
+        assert!(cmd.can_execute(&state).is_err())
+    }
+
+    #[test]
+    fn it_errors_if_blocked_by_worker() {
+        let from = Position::new(Row::One, Column::A);
+        let to = Position::new(Row::One, Column::B);
+        let cmd = MovementCommand { from, to };
+
+        let state = StateBuilder::new()
+            .with_current_player(Player::Red)
+            .add_red_worker(from)
+            .add_blue_worker(to)
+            .build();
+
+        assert!(cmd.can_execute(&state).is_err())
+    }
+
+    #[test]
+    fn it_errors_if_blocked_by_dome() {
+        let from = Position::new(Row::One, Column::A);
+        let to = Position::new(Row::One, Column::B);
+        let cmd = MovementCommand { from, to };
+
+        let state = StateBuilder::new()
+            .with_current_player(Player::Red)
+            .add_red_worker(from)
+            .add_tower(
+                from,
+                Tower {
+                    dome: None,
+                    level: Level::Two,
+                },
+            )
+            .add_tower(
+                to,
+                Tower {
+                    dome: Some(Dome {}),
+                    level: Level::Three,
+                },
+            )
+            .build();
+
+        assert!(cmd.can_execute(&state).is_err())
+    }
+
+    #[test]
+    fn it_errors_if_too_high() {
+        let from = Position::new(Row::One, Column::A);
+        let to = Position::new(Row::One, Column::B);
+        let cmd = MovementCommand { from, to };
+
+        let state = StateBuilder::new()
+            .with_current_player(Player::Red)
+            .add_red_worker(from)
+            .add_tower(
+                from,
+                Tower {
+                    dome: None,
+                    level: Level::One,
+                },
+            )
+            .add_tower(
+                to,
+                Tower {
+                    dome: None,
+                    level: Level::Three,
+                },
+            )
+            .build();
+
+        assert!(cmd.can_execute(&state).is_err())
+    }
+
+    #[test]
+    fn it_allows_move() {
+        let from = Position::new(Row::One, Column::A);
+        let to = Position::new(Row::One, Column::B);
+        let cmd = MovementCommand { from, to };
+
+        let state = StateBuilder::new()
+            .with_current_player(Player::Red)
+            .add_red_worker(from)
+            .build();
+
+        assert!(cmd.can_execute(&state).is_ok())
+    }
+
+    #[test]
+    fn it_allows_move_up() {
+        let from = Position::new(Row::One, Column::A);
+        let to = Position::new(Row::One, Column::B);
+        let cmd = MovementCommand { from, to };
+
+        let state = StateBuilder::new()
+            .with_current_player(Player::Red)
+            .add_red_worker(from)
+            .add_tower(
+                to,
+                Tower {
+                    dome: None,
+                    level: Level::One,
+                },
+            )
+            .build();
+
+        assert!(cmd.can_execute(&state).is_ok())
+    }
+
+    #[test]
+    fn it_allows_move_down() {
+        let from = Position::new(Row::One, Column::A);
+        let to = Position::new(Row::One, Column::B);
+        let cmd = MovementCommand { from, to };
+
+        let state = StateBuilder::new()
+            .with_current_player(Player::Red)
+            .add_red_worker(from)
+            .add_tower(
+                from,
+                Tower {
+                    dome: None,
+                    level: Level::Two,
+                },
+            )
+            .build();
+
+        assert!(cmd.can_execute(&state).is_ok())
+    }
+
+    #[test]
+    fn it_allows_move_between_towers() {
+        let from = Position::new(Row::One, Column::A);
+        let to = Position::new(Row::One, Column::B);
+        let cmd = MovementCommand { from, to };
+
+        let state = StateBuilder::new()
+            .with_current_player(Player::Red)
+            .add_red_worker(from)
+            .add_tower(
+                from,
+                Tower {
+                    dome: None,
+                    level: Level::Two,
+                },
+            )
+            .add_tower(
+                to,
+                Tower {
+                    dome: None,
+                    level: Level::Two,
+                },
+            )
+            .build();
+
+        assert!(cmd.can_execute(&state).is_ok())
+    }
+}
