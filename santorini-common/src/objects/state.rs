@@ -4,7 +4,6 @@ use super::{player::Player, space::Space, tower::Level, worker::Worker};
 use crate::{
     command::Command,
     error::SantoriniError,
-    phase::Phase,
     position::{Column, Position, Row},
 };
 
@@ -40,11 +39,8 @@ impl State {
     }
 
     // I don't think this method should exist?
-    pub fn transition(mut self, command: &dyn Command) -> Phase {
-        if let Err(err) = self.apply_command(command) {
-            eprintln!("{}", err);
-        }
-        Phase::InProgress(self)
+    pub fn transition(self, command: &dyn Command) -> Result<State, SantoriniError> {
+        self.apply_command(command)
     }
 
     // pub fn try_transition(mut self, input: &Input) -> Result<Phase, SantoriniError> {
@@ -60,9 +56,9 @@ impl State {
     // }
 
     /// Mutates the game state. Any errors surfaced here are not irrecoverable.
-    pub fn apply_command(&mut self, command: &dyn Command) -> Result<(), SantoriniError> {
-        command.execute(self)?;
-        Ok(())
+    pub fn apply_command(mut self, command: &dyn Command) -> Result<State, SantoriniError> {
+        command.execute(&mut self)?;
+        Ok(self)
     }
 
     // Returns a winner, assuming that a legal state has exactly one winner
