@@ -43,7 +43,13 @@ impl Command for MovementCommand {
         // TODO
 
         // 4) it is a valid move in one of the 8 directions
-        // TODO
+        if !&self.to.adjacent_to(&self.from) {
+            return Err(SantoriniError::InvalidMovement {
+                from: self.from,
+                to: self.to,
+                details: "The given positions are not adjacent".into(),
+            });
+        }
 
         // 5) the `to` space is not occupied by another worker
         if state.space(&self.to).worker().is_some() {
@@ -171,6 +177,20 @@ mod tests {
             .with_current_player(Player::Red)
             .add_red_worker(from)
             .add_blue_worker(to)
+            .build();
+
+        assert!(cmd.can_execute(&state).is_err())
+    }
+
+    #[test]
+    fn it_errors_if_nonadjacent() {
+        let from = Position::new(Row::One, Column::A);
+        let to = Position::new(Row::One, Column::C);
+        let cmd = MovementCommand { from, to };
+
+        let state = StateBuilder::new()
+            .with_current_player(Player::Red)
+            .add_red_worker(from)
             .build();
 
         assert!(cmd.can_execute(&state).is_err())
