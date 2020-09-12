@@ -2,7 +2,7 @@ use std::{convert::TryFrom, fmt};
 
 use crate::error::SantoriniError;
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct Position(pub Column, pub Row);
 
 impl Position {
@@ -25,6 +25,16 @@ impl Position {
     pub fn column_index(&self) -> usize {
         self.column() as usize
     }
+
+    pub fn adjacent_to(&self, other: &Position) -> bool {
+        if self == other {
+            false
+        } else {
+            let column_delta = (self.column_index() as i32 - other.column_index() as i32).abs();
+            let row_delta = (self.row_index() as i32 - other.row_index() as i32).abs();
+            column_delta <= 1 && row_delta <= 1
+        }
+    }
 }
 
 impl fmt::Display for Position {
@@ -33,7 +43,7 @@ impl fmt::Display for Position {
     }
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Column {
     A = 0,
     B = 1,
@@ -73,7 +83,7 @@ impl TryFrom<char> for Column {
     }
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Row {
     Zero = 0,
     One = 1,
@@ -109,6 +119,34 @@ impl TryFrom<char> for Row {
             '3' => Ok(Row::Three),
             '4' => Ok(Row::Four),
             _ => Err(SantoriniError::InvalidArgument(value.to_string())),
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn it_computes_adjacency_correctly() {
+        let adj = [
+            Position::new(Row::Zero, Column::A),
+            Position::new(Row::One, Column::A),
+            Position::new(Row::Zero, Column::B),
+            Position::new(Row::One, Column::B),
+        ];
+        let far = Position::new(Row::Four, Column::E);
+
+        for i in 0..adj.len() {
+            for j in 0..adj.len() {
+                assert!((i == j) ^ &adj[i].adjacent_to(&adj[j]));
+                assert!((i == j) ^ &adj[j].adjacent_to(&adj[i]));
+            }
+        }
+
+        for pos in &adj {
+            assert!(!pos.adjacent_to(&far));
+            assert!(!&far.adjacent_to(pos));
         }
     }
 }
